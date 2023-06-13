@@ -1,0 +1,45 @@
+﻿<Window x:Class="SteelInventory.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="magazyn" Height="493" Width="966">
+    <Grid Margin="0,0,-126,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="Nazwa:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox x:Name="NameTextBox" Width="150" VerticalAlignment="Center" />
+            <TextBlock Text="Kod:" VerticalAlignment="Center" Margin="10,0,5,0" />
+            <TextBox x:Name="CodeTextBox" Width="100" VerticalAlignment="Center" />
+            <TextBlock Text="Waga (t):" VerticalAlignment="Center" Margin="10,0,5,0" />
+            <TextBox x:Name="WeightTextBox" Width="80" VerticalAlignment="Center" />
+            <TextBlock Text="Długość:" VerticalAlignment="Center" Margin="10,0,5,0" />
+            <TextBox x:Name="LengthTextBox" Width="80" VerticalAlignment="Center" />
+            <TextBlock Text="Grubość:" VerticalAlignment="Center" Margin="10,0,5,0" />
+            <TextBox x:Name="ThicknessTextBox" Width="80" VerticalAlignment="Center" />
+            <Button Content="Dodaj" Click="AddButton_Click" Margin="10,0,0,0" />
+            <Button Content="Usuń" Click="DeleteButton_Click" Margin="10,0,0,0" />
+            <Button Content="Edytuj" Click="EditButton_Click" Margin="10,0,0,0" />
+        </StackPanel>
+
+        <ListView x:Name="SteelListView" Grid.Row="1" Margin="5,5,171,5" BorderBrush="#FFABABAB" BorderThickness="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Nazwa" DisplayMemberBinding="{Binding Name}" Width="150" />
+                    <GridViewColumn Header="Kod" DisplayMemberBinding="{Binding Code}" Width="100" />
+                    <GridViewColumn Header="Waga (t)" DisplayMemberBinding="{Binding Weight}" Width="80" />
+                    <GridViewColumn Header="Długość (m)" DisplayMemberBinding="{Binding Length}" Width="80" />
+                    <GridViewColumn Header="Grubość (mm)" DisplayMemberBinding="{Binding Thickness}" Width="80" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+            <TextBlock x:Name="TotalWeightLabel" VerticalAlignment="Center" />
+            <TextBlock x:Name="TotalLengthLabel" VerticalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Window>
