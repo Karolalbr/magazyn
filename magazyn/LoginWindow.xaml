@@ -17,10 +17,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="1" Grid.Column="1" Content="Login:"/>
+        <Label Grid.Row="1" Grid.Column="1" Content="Login(Admin):"/>
         <TextBox x:Name="LoginTextBox" Grid.Row="1" Grid.Column="2" Width="250"/>
 
-        <Label Grid.Row="2" Grid.Column="1" Content="Password:"/>
+        <Label Grid.Row="2" Grid.Column="1" Content="Password(123):"/>
         <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="2" Width="250"/>
 
         <Button Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Content="Login" Click="Button_Click" Width="100" Height="30"/>
