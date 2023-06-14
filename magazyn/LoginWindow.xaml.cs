@@ -12,7 +12,7 @@ namespace SteelInventory
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (LoginTextBox.Text == "Admin" && PasswordBox.Password == "")
+            if (LoginTextBox.Text == "Admin" && PasswordBox.Password == "123")
             {
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
