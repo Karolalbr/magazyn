@@ -172,10 +172,19 @@ namespace SteelInventory
 
     public class SteelContext : DbContext
     {
+        private string GetDatabaseFilePath()
+        {
+            string databaseFileName = "magazyn.mdf";
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string projectDirectory = Directory.GetParent(Directory.GetParent(Directory.GetParent(currentDirectory).FullName).FullName).FullName;
+            string databaseFilePath = Path.Combine(projectDirectory, databaseFileName);
+
+            return databaseFilePath;
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string path = Path.Combine(Environment.CurrentDirectory, @"data\magazyn.mdf");
-            string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={path};Integrated Security=True";
+
+            string connectionString = ($"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={GetDatabaseFilePath()};Integrated Security=True;Connect Timeout=30");
 
             optionsBuilder.UseSqlServer(connectionString);
         }
