@@ -1,25 +1,83 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.6.33723.286
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magazyn", "magazyn\magazyn.csproj", "{69393E50-085A-4365-97D1-022BD42D76CF}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{69393E50-085A-4365-97D1-022BD42D76CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{69393E50-085A-4365-97D1-022BD42D76CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{69393E50-085A-4365-97D1-022BD42D76CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{69393E50-085A-4365-97D1-022BD42D76CF}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2B69AB01-0C7D-487D-8DAB-44546A920070}
-	EndGlobalSection
-EndGlobal
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
+using Infrastructure.Data;
+using System.Text.Json;
+using Core.Models;
+using System.Collections.Generic;
+
+namespace SuperHeroesWebAPI.Controllers
+{
+    [ApiController]
+    [Route("api/superheroes")]
+    public class SuperheroesController : ControllerBase
+    {
+        private readonly SuperheroContext _context;
+
+        public SuperheroesController(SuperheroContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSuperheroById(int id)
+        {
+            var superhero = await _context.superhero
+                .Include(s => s.hero_attributes)
+                    .ThenInclude(ha => ha.attribute)
+                .FirstOrDefaultAsync(s => s.id == id);
+
+            if (superhero == null)
+            {
+                return NotFound();
+            }
+
+            var result = new
+            {
+                name = superhero.superhero_name,
+                height = superhero.height_cm.HasValue ? $"{superhero.height_cm.Value / 100.0} m" : "N/A",
+                weight = superhero.weight_kg.HasValue ? $"{superhero.weight_kg.Value} kg" : "N/A",
+                attributes = superhero.hero_attributes.Select(ha => new
+                {
+                    attributeName = ha.attribute.attribute_name,
+                    attributeValue = ha.attribute_value
+                }).ToList()
+            };
+
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/alignment")]
+        public async Task<IActionResult> UpdateAlignment(int id, [FromBody] AlignmentUpdateRequest request)
+        {
+            var validAlignments = new[] { "Bad", "Good", "Neutral", "N/A" };
+            if (!validAlignments.Contains(request.Alignment))
+            {
+                return BadRequest("Invalid alignment value.");
+            }
+
+            var superhero = await _context.superhero.FirstOrDefaultAsync(s => s.id == id);
+            if (superhero == null)
+            {
+                return NotFound();
+            }
+
+            var alignment = await _context.alignment.FirstOrDefaultAsync(a => a.name == request.Alignment);
+            if (alignment == null)
+            {
+                return BadRequest("Invalid alignment value.");
+            }
+
+            superhero.alignment_id = alignment.id;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+    }
+
+    public class AlignmentUpdateRequest
+    {
+        public string Alignment { get; set; }
+    }
+}
